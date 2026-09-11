@@ -24,16 +24,16 @@ function DefaultLayout {
     $cmds = @()
 
     # Step 1: Split horizontally (left/right)
-    $cmds += 'pwsh -NoExit'
-    $cmds += 'split-pane -H --size 0.5 cmd /K'
+    $cmds += 'pwsh -NoExit -command cls'
+    $cmds += 'split-pane -H --size 0.5 cmd /K cls'
 
     # Step 2: Focus left pane and split vertically
     $cmds += 'focus-pane -t 0'
-    $cmds += 'split-pane -V --size 0.5 wsl -d Ubuntu -- bash -c "cd && exec bash"'
+    $cmds += 'split-pane -V --size 0.5 wsl -d Ubuntu -- bash -c "cd && clear && exec bash"'
 
     # Step 3: Focus right pane and split vertically
     $cmds += 'focus-pane -t 1'
-    $cmds += 'split-pane -V --size 0.5 Ubuntu run "cd && exec bash"'
+    $cmds += 'split-pane -V --size 0.5 Ubuntu run "cd && clear && exec bash"'
 
     $cmds += 'focus-pane -t 0'
     Start-Process wt.exe ($cmds -join ' ; ')
@@ -42,10 +42,10 @@ function DefaultLayout {
 # If no args passed, use defaults
 if (-not $ArgsFromBatch -or $ArgsFromBatch.Count -eq 0) {
     # $Panes = @(
-    #     @{ Command = 'pwsh -NoExit'; Direction = 'H'; Size = 0.5 },
-    #     @{ Command = 'cmd /K'; Direction = 'H'; Size = 0.5 },
-    #     @{ Command = 'focus-pane -t 0 ; wsl -d Ubuntu -- bash -c "exec bash"'; Direction = 'V'; Size = 0.5 },
-    #     @{ Command = 'focus-pane -t 1 ; Ubuntu run "exec bash"'; Direction = 'V'; Size = 0.5 }
+    #     @{ Command = 'pwsh -NoExit -command cls'; Direction = 'H'; Size = 0.5 },
+    #     @{ Command = 'cmd /K cls'; Direction = 'H'; Size = 0.5 },
+    #     @{ Command = 'focus-pane -t 0 ; wsl -d Ubuntu -- bash -c "cd && clear && exec bash"'; Direction = 'V'; Size = 0.5 },
+    #     @{ Command = 'focus-pane -t 1 ; Ubuntu run "cd && clear && exec bash"'; Direction = 'V'; Size = 0.5 }
     # )
     DefaultLayout
     exit
@@ -62,10 +62,10 @@ else {
         
         # Special handling for known keywords
         switch -Regex ($cmd.ToLower()) {
-            "ubuntu" { $cmd = 'Ubuntu run "cd && exec bash"' }
-            "wsl" { $cmd = 'wsl -d Ubuntu -- bash -c "cd && exec bash"' }
-            "cmd" { $cmd = 'cmd /K' }
-            "powershell" { $cmd = 'pwsh -NoExit' }
+            "ubuntu" { $cmd = 'Ubuntu run "cd && clear && exec bash"' }
+            "wsl" { $cmd = 'wsl -d Ubuntu -- bash -c "cd && clear && exec bash"' }
+            "cmd" { $cmd = 'cmd /K cls' }
+            "powershell" { $cmd = 'pwsh -NoExit -command cls' }
             default { $cmd }
         }
 
